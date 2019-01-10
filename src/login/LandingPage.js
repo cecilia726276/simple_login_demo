@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 import {
     Form, Icon, Input, Button, Checkbox,
 } from 'antd';
-
+import PropTypes from "proptypes";
+import * as routes from '../router/MainPages';
+import { Link } from 'react-router-dom';
 class Landing extends Component {
     constructor(props) {
         super(props);
@@ -14,9 +16,11 @@ class Landing extends Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                console.log('Received values of form: ', values);
-            }
 
+                console.log('Received values of form: ', values);
+                let history = this.context.router.history;
+                history.push(routes.SIGN_IN);
+            }
         });
 
     };
@@ -51,12 +55,16 @@ class Landing extends Component {
                     <Button type="primary" htmlType="submit" style={{ width: '100%'}}className="login-form-button">
                         Log in
                     </Button>
-                    Or <a href="/">register now!</a>
+                    Or <Link to={routes.SIGN_UP}>register now!</Link>
                 </Form.Item>
             </Form>
             </div>
         );
     }
 }
+
+Landing.contextTypes = {
+    router: PropTypes.object.isRequired
+};
 const LandingPage = Form.create()(Landing);
 export default (props)=><LandingPage {...props} />

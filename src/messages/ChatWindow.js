@@ -5,7 +5,7 @@ const {
     Header, Footer, Sider, Content,
 } = Layout;
 
-class LoginPage extends Component {
+class ChatWindow extends Component {
     render() {
         return (
             <div>
@@ -17,4 +17,4 @@ class LoginPage extends Component {
     }
 }
 
-export default LoginPage;
+export default ChatWindow;
