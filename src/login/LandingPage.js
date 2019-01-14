@@ -16,8 +16,33 @@ class Landing extends Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-
                 console.log('Received values of form: ', values);
+                let filter={
+                    object:{
+                        object:{
+                            username:values.username,
+                            password:values.password,
+                        }
+                    }
+                };
+                let getInformation ={
+                    method:"POST",
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    /* json格式转换 */
+                    body:JSON.stringify(filter)
+                }
+                //注意：/org/find的方法名对应于后台Controller层中的RequestMapping
+                fetch("/user/login",getInformation)
+                    .then(response => response.json())
+                    .then(json =>{
+                        // 返回的数据类型
+                        this.setState({
+                            object:json.object.list
+                        })
+                    });
+
                 let history = this.context.router.history;
                 history.push(routes.SIGN_IN);
             }
