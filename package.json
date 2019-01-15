@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "antd": "^3.12.1",
+    "fetch": "^1.1.0",
     "proptypes": "^1.1.0",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
@@ -24,5 +25,8 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "devDependencies": {
+    "http-proxy-middleware": "^0.19.1"
+  }
 }

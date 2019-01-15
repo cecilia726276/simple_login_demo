@@ -18,12 +18,8 @@ class Landing extends Component {
             if (!err) {
                 console.log('Received values of form: ', values);
                 let filter={
-                    object:{
-                        object:{
                             username:values.username,
                             password:values.password,
-                        }
-                    }
                 };
                 let getInformation ={
                     method:"POST",
@@ -32,15 +28,19 @@ class Landing extends Component {
                     },
                     /* json格式转换 */
                     body:JSON.stringify(filter)
-                }
+                };
                 //注意：/org/find的方法名对应于后台Controller层中的RequestMapping
-                fetch("/user/login",getInformation)
-                    .then(response => response.json())
+                fetch('http://localhost:3432/user/login',getInformation)
+                    .then(response => {
+
+                        console.log(response);
+                    })
                     .then(json =>{
                         // 返回的数据类型
-                        this.setState({
+                        console.log(json);
+                       /* this.setState({
                             object:json.object.list
-                        })
+                        })*/
                     });
 
                 let history = this.context.router.history;
