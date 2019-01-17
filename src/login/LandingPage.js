@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {
     Form, Icon, Input, Button, Checkbox,
 } from 'antd';
+import axios from 'axios';
 import PropTypes from "proptypes";
 import * as routes from '../router/MainPages';
 import { Link } from 'react-router-dom';
@@ -18,33 +19,45 @@ class Landing extends Component {
             if (!err) {
                 console.log('Received values of form: ', values);
                 let filter={
-                            username:values.username,
+                            username:values.userName,
                             password:values.password,
                 };
+
+                let ret = '';
+                for (let it in filter){
+                    ret += encodeURIComponent(it) + '=' + encodeURIComponent(filter[it])+ '&'
+                }
                 let getInformation ={
                     method:"POST",
+                    url:"/user/login",
                     headers:{
-                        "Content-Type":"application/json"
+                        'Content-type': 'application/x-www-form-urlencoded'
                     },
-                    /* json格式转换 */
-                    body:JSON.stringify(filter)
+                    /* axios 会自动进行json格式转换 */
+                    data: ret,
                 };
-                //注意：/org/find的方法名对应于后台Controller层中的RequestMapping
-                fetch('http://localhost:3432/user/login',getInformation)
+                //注意：/xxx/xxx的方法名对应于后台Controller层中的RequestMapping
+                axios(getInformation)
                     .then(response => {
 
                         console.log(response);
+                        let responseCode = response.data.code;
+                        if (responseCode === 200){
+                            let history = this.context.router.history;
+                            history.push(routes.SIGN_IN);
+                        } else if (responseCode === 1001){
+                            alert("Wrong password!");
+                        } else{
+                            alert("Error!")
+                        }
+
                     })
-                    .then(json =>{
+                    .then(error =>{
                         // 返回的数据类型
-                        console.log(json);
-                       /* this.setState({
-                            object:json.object.list
-                        })*/
+                        console.log(error);
                     });
 
-                let history = this.context.router.history;
-                history.push(routes.SIGN_IN);
+
             }
         });
 
