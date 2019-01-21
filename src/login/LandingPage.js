@@ -17,15 +17,15 @@ class Landing extends Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                console.log('Received values of form: ', values);
+                //console.log('Received values of form: ', values);
                 let filter={
                             username:values.userName,
                             password:values.password,
                 };
 
-                let ret = '';
+                let temp = '';
                 for (let it in filter){
-                    ret += encodeURIComponent(it) + '=' + encodeURIComponent(filter[it])+ '&'
+                    temp += encodeURIComponent(it) + '=' + encodeURIComponent(filter[it])+ '&'
                 }
                 let getInformation ={
                     method:"POST",
@@ -34,7 +34,7 @@ class Landing extends Component {
                         'Content-type': 'application/x-www-form-urlencoded'
                     },
                     /* axios 会自动进行json格式转换 */
-                    data: ret,
+                    data: temp,
                 };
                 //注意：/xxx/xxx的方法名对应于后台Controller层中的RequestMapping
                 axios(getInformation)
