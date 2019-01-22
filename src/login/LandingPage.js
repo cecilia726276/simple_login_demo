@@ -1,16 +1,34 @@
 import React, { Component } from 'react';
 import {
-    Form, Icon, Input, Button, Checkbox,
+    Form, Icon, Input, Button, Checkbox, message
 } from 'antd';
 import axios from 'axios';
 import PropTypes from "proptypes";
 import * as routes from '../router/MainPages';
 import { Link } from 'react-router-dom';
+import cookie from 'react-cookies';
+import LoginPage from "./LoginPage";
+
 class Landing extends Component {
     constructor(props) {
         super(props);
+        this.onLogin = this.onLogin.bind(this);
+        this.onLogout = this.onLogout.bind(this);
         this.state = {
         };
+    }
+
+    componentWillMount() {
+        this.state =  { token: cookie.load('token') }
+    }
+
+    onLogin(token) {
+        this.setState({ token });
+        cookie.save('token', token, { path: '/' })
+    }
+
+    onLogout() {
+        cookie.remove('token', { path: '/' })
     }
 
     handleSubmit = (e) => {
@@ -42,20 +60,20 @@ class Landing extends Component {
 
                         console.log(response);
                         let responseCode = response.data.code;
+                        let token = response.data.token;
                         if (responseCode === 200){
+                            this.onLogin(token);
+                            //cookie.remove('userId');
                             let history = this.context.router.history;
                             history.push(routes.SIGN_IN);
                         } else if (responseCode === 1001){
-                            alert("Wrong password!");
+                            let error = response.data.data.ERRORS;
+                            message.error(error);
                         } else{
                             alert("Error!")
                         }
 
                     })
-                    .then(error =>{
-                        // 返回的数据类型
-                        console.log(error);
-                    });
 
 
             }
@@ -65,39 +83,50 @@ class Landing extends Component {
 
     render() {
         const { getFieldDecorator } = this.props.form;
-        return (
-            <div style={{width: '300px', margin: 'auto', marginTop:'100px' }}>
-            <Form onSubmit={this.handleSubmit} className="login-form">
-                <Form.Item>
-                    {getFieldDecorator('userName', {
-                        rules: [{ required: true, message: 'Please input your username!' }],
-                    })(
-                        <Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Username" />
-                    )}
-                </Form.Item>
-                <Form.Item>
-                    {getFieldDecorator('password', {
-                        rules: [{ required: true, message: 'Please input your Password!' }],
-                    })(
-                        <Input prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />} type="password" placeholder="Password" />
-                    )}
-                </Form.Item>
-                <Form.Item>
-                    {getFieldDecorator('remember', {
-                        valuePropName: 'checked',
-                        initialValue: true,
-                    })(
-                        <Checkbox>Remember me</Checkbox>
-                    )}
-                    <a className="login-form-forgot" href="">Forgot password</a>
-                    <Button type="primary" htmlType="submit" style={{ width: '100%'}}className="login-form-button">
-                        Log in
-                    </Button>
-                    Or <Link to={routes.SIGN_UP}>register now!</Link>
-                </Form.Item>
-            </Form>
+        const { token } = this.state;
+        if (!token) {
+            return (
+                <div style={{width: '300px', margin: 'auto', marginTop: '100px'}}>
+                    <Form onSubmit={this.handleSubmit} className="login-form">
+                        <Form.Item>
+                            {getFieldDecorator('userName', {
+                                rules: [{required: true, message: 'Please input your username!'}],
+                            })(
+                                <Input prefix={<Icon type="user" style={{color: 'rgba(0,0,0,.25)'}}/>}
+                                       placeholder="Username"/>
+                            )}
+                        </Form.Item>
+                        <Form.Item>
+                            {getFieldDecorator('password', {
+                                rules: [{required: true, message: 'Please input your Password!'}],
+                            })(
+                                <Input prefix={<Icon type="lock" style={{color: 'rgba(0,0,0,.25)'}}/>} type="password"
+                                       placeholder="Password"/>
+                            )}
+                        </Form.Item>
+                        <Form.Item>
+                            {getFieldDecorator('remember', {
+                                valuePropName: 'checked',
+                                initialValue: true,
+                            })(
+                                <Checkbox>Remember me</Checkbox>
+                            )}
+                            <a className="login-form-forgot" href="">Forgot password</a>
+                            <Button type="primary" htmlType="submit" style={{width: '100%'}}
+                                    className="login-form-button">
+                                Log in
+                            </Button>
+                            Or <Link to={routes.SIGN_UP}>register now!</Link>
+                        </Form.Item>
+                    </Form>
+                </div>
+            );
+        }
+        return(
+            <div>
+                <LoginPage token={token}/>
             </div>
-        );
+        )
     }
 }
 
