@@ -1,11 +1,16 @@
 import React, { Component } from 'react';
 import {
-    Form, Input, Tooltip, Icon, Checkbox, Button, message
+    Form, Input, Tooltip, Icon, Checkbox, Button, message, Popover
 } from 'antd';
 import * as routes from "../router/MainPages";
 import axios from "axios/index";
 import PropTypes from "proptypes";
 
+const passwordRules =
+    "最短6位，最长16位 \n" +
+    "可以包含小写大母[a-z]和大写字母[A-Z] \n " +
+    "可以包含数字 [0-9] \n " +
+    "可以包含下划线 [ _ ] 和减号 [ - ]";
 
 class Signup extends Component {
 
@@ -56,10 +61,6 @@ class Signup extends Component {
                             message.error("发生未知错误，请重试！")
                         }
                     })
-                    .then(error =>{
-                        // 返回的数据类型
-                        console.log(error);
-                    });
             }
         });
     };
@@ -72,14 +73,27 @@ class Signup extends Component {
     compareToFirstPassword = (rule, value, callback) => {
         const form = this.props.form;
         if (value && value !== form.getFieldValue('password')) {
-            callback('Two passwords that you enter is inconsistent!');
+            callback('两次输入密码不一致');
         } else {
             callback();
         }
     };
-
+    validateUsername = (rule,value,callback) =>{
+        const form = this.props.form;
+        let pattern = /^.{8,15}$/;
+        if (!pattern.test(value)){
+            callback('请输入8-15位长度的用户名')
+        }
+        callback();
+    };
     validateToNextPassword = (rule, value, callback) => {
         const form = this.props.form;
+        let pattern = /^[\w_-]{6,16}$/;
+        if (!pattern.test(value)){
+            //form.validateFields(['conf'], {force:true});
+            callback('请输入符合规范的密码');
+        }
+
         if (value && this.state.confirmDirty) {
             form.validateFields(['confirm'], {force: true});
         }
@@ -122,26 +136,36 @@ class Signup extends Component {
                             label={(
                                 <span>
               Username&nbsp;
-                                    <Tooltip title="Your username must be unique.">
+                                    <Tooltip title="请输入8-15位长度的用户名">
                 <Icon type="question-circle-o"/>
               </Tooltip>
             </span>
                             )}
                         >
                             {getFieldDecorator('userName', {
-                                rules: [{required: true, message: 'Please input your username!', whitespace: true}],
+                                rules: [{
+                                    required: true, message: 'Please input your username!', whitespace: true
+                                }, {
+                                    validator: this.validateUsername}],
                             })(
                                 <Input/>
                             )}
                         </Form.Item>
                         <Form.Item
                             {...formItemLayout}
-                            label="Password"
+                            label={(
+                            <span>
+              Password&nbsp;
+                                <Tooltip title={passwordRules} >
+                <Icon type="question-circle-o"/>
+              </Tooltip>
+            </span>
+                        )}
                         >
                             {getFieldDecorator('password', {
                                 rules: [{
                                     required: true, message: 'Please input your password!',
-                                }, {
+                                },{
                                     validator: this.validateToNextPassword,
                                 }],
                             })(
@@ -165,7 +189,10 @@ class Signup extends Component {
                         <Form.Item {...tailFormItemLayout}>
                             {getFieldDecorator('agreement', {
                                 valuePropName: 'checked',
-                            })(
+                                rules:[{
+                                    required: true, message:'Please check the agreement!',
+                                }]}
+                            )(
                                 <Checkbox>I have read the <a href="">agreement</a></Checkbox>
                             )}
                         </Form.Item>
