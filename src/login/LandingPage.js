@@ -3,11 +3,11 @@ import {
     Form, Icon, Input, Button, Checkbox, message
 } from 'antd';
 import axios from 'axios';
+import {prepareRequest} from './Authentication';
 import PropTypes from "proptypes";
 import * as routes from '../router/MainPages';
 import { Link } from 'react-router-dom';
 import cookie from 'react-cookies';
-import LoginPage from "./LoginPage";
 
 class Landing extends Component {
     constructor(props) {
@@ -19,12 +19,39 @@ class Landing extends Component {
     }
 
     componentWillMount() {
-        this.state =  { token: cookie.load('token') }
+        this.state =  { token: cookie.load('token') };
+        let token = cookie.load('token');
+        console.log('token'+ token);
+        let undefinedToken = (token === "undefined") || typeof(token) == "undefined";
+
+        if (!undefinedToken){
+            let filter = {
+                token: token
+            };
+            let url = "/user/authentication";
+            let getInformation = prepareRequest(filter,url);
+
+            axios(getInformation)
+                .then(response => {
+
+                    console.log(response);
+                    let responseCode = response.data.code;
+                    if (responseCode === 200) {
+                        let history = this.context.router.history;
+                        history.push(routes.SIGN_IN);
+                    } else if (responseCode === 1001) {
+                        this.onLogout();
+                    } else {
+                        message.error("发生未知错误，请重试！")
+                    }
+                })
+        }
     }
 
     onLogin(token) {
         this.setState({ token });
         cookie.save('token', token, { path: '/' })
+        console.log('Saved token: ', token);
     }
 
     onLogout() {
@@ -60,7 +87,8 @@ class Landing extends Component {
 
                         console.log(response);
                         let responseCode = response.data.code;
-                        let token = response.data.token;
+                        let token = response.data.data.token;
+                        console.log("First token: ", token);
                         if (responseCode === 200){
                             this.onLogin(token);
                             //cookie.remove('userId');
@@ -72,10 +100,7 @@ class Landing extends Component {
                         } else{
                             alert("Error!")
                         }
-
                     })
-
-
             }
         });
 
@@ -83,8 +108,6 @@ class Landing extends Component {
 
     render() {
         const { getFieldDecorator } = this.props.form;
-        const { token } = this.state;
-        if (!token) {
             return (
                 <div style={{width: '300px', margin: 'auto', marginTop: '100px'}}>
                     <Form onSubmit={this.handleSubmit} className="login-form">
@@ -121,12 +144,6 @@ class Landing extends Component {
                     </Form>
                 </div>
             );
-        }
-        return(
-            <div>
-                <LoginPage token={token}/>
-            </div>
-        )
     }
 }
 
