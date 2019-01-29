@@ -7,6 +7,7 @@ import PropTypes from "proptypes";
 import {prepareRequest} from "./Authentication";
 import axios from "axios/index";
 import Sidebar from "../messages/Sidebar";
+import MessageWindow from "../messages/MessageWindow";
 
 const { TextArea } = Input;
 const {
@@ -69,6 +70,7 @@ class LoginPage extends Component {
                         公共聊天室
                     </Header>
                     <Content>
+                        <MessageWindow/>
                         Chat Content
                         ChatWindow(history) + MemberList(all members)
                     </Content>
