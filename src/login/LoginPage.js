@@ -66,15 +66,16 @@ class LoginPage extends Component {
                 <Sidebar/>
                 {/*以下为聊天窗口界面*/}
                 <Layout>
-                    <Header style={{background: '#ffffff'}}>
+                    <Header style={{background: '#ffffff', height:'50px', lineHeight:'50px'}}>
                         公共聊天室
                     </Header>
-                    <Content>
+                    <Content style={{ height: '400px', overflowY: 'scroll'  }}>
                         <MessageWindow/>
-                        Chat Content
-                        ChatWindow(history) + MemberList(all members)
                     </Content>
-                    <Footer style={{background: '#ffffff'}}><TextArea style={{border: '0px', background: 'none', resize: 'none'}}rows={6} /></Footer>
+                    <Footer style={{background: '#ffffff'}}>
+                        <textarea style={{width:'100%',outline: 'none', border: '0', background: 'none', resize: 'none'}} rows={6} />
+                        <Button style={{float: 'right'}} htmlType='submit'>发送</Button>
+                    </Footer>
                 </Layout>
             </Layout>
         );

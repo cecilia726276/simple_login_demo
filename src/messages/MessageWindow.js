@@ -60,6 +60,18 @@ export default class MessageWindow extends PureComponent {
         ],
     };
 
+    scrollToBottom = () => {
+        this.messagesEnd.scrollIntoView({ behavior: "smooth" });
+    }
+
+    componentDidMount() {
+        this.scrollToBottom();
+    }
+
+    componentDidUpdate() {
+        this.scrollToBottom();
+    }
+
     static getDerivedStateFromProps(nextProps, prevState) {
         const { data } = nextProps;
 
@@ -124,6 +136,7 @@ export default class MessageWindow extends PureComponent {
         // 渲染组件的前置条件
         const isRender = list && list.length > 0;
         return (
+            <div>
             <ul className='list-wrapper'>
                 {isRender &&
                 list.map((item, listIndex) => {
@@ -131,8 +144,8 @@ export default class MessageWindow extends PureComponent {
                         <Suspense fallback={this.wakeUpLazyComponent()} key={listIndex}>
                             <li
                                 className='list-item'
-                                onMouseOver={() => this.showOperatBtn(listIndex)}
-                                onMouseLeave={() => this.hideOperatBtn(listIndex)}
+                                // onMouseOver={() => this.showOperatBtn(listIndex)}
+                                // onMouseLeave={() => this.hideOperatBtn(listIndex)}
                             >
                                 <span className='time'>{item.time ? item.time : '时间占位符'}</span>
                                 <div
@@ -162,35 +175,40 @@ export default class MessageWindow extends PureComponent {
                                             <LazyComponent {...item} />
                                         </div>
                                     </div>
-                                    {!!operate && item.operatBtn ? (
-                                        <Popover
-                                            content={'此操作会删除该记录'}
-                                            title="谨慎操作!"
-                                            onMouseEnter={() => {
-                                                this.setState({ deleteBtnSpin: true });
-                                            }}
-                                            onMouseLeave={() => {
-                                                this.setState({ deleteBtnSpin: false });
-                                            }}
-                                        >
-                                            <Icon
-                                                type="delete"
-                                                spin={deleteBtnSpin}
-                                                style={{
-                                                    fontSize: 24,
-                                                    alignSelf: 'flex-end',
-                                                    color: `${this.state.deleteBtnSpin ? '#ec1414' : '#1890ff'}`,
-                                                }}
-                                                onClick={() => this.deleteCurrentReplay(listIndex, item)}
-                                            />
-                                        </Popover>
-                                    ) : null}
+                                    {/*{!!operate && item.operatBtn ? (*/}
+                                        {/*<Popover*/}
+                                            {/*content={'此操作会删除该记录'}*/}
+                                            {/*title="谨慎操作!"*/}
+                                            {/*onMouseEnter={() => {*/}
+                                                {/*this.setState({ deleteBtnSpin: true });*/}
+                                            {/*}}*/}
+                                            {/*onMouseLeave={() => {*/}
+                                                {/*this.setState({ deleteBtnSpin: false });*/}
+                                            {/*}}*/}
+                                        {/*>*/}
+                                            {/*<Icon*/}
+                                                {/*type="delete"*/}
+                                                {/*spin={deleteBtnSpin}*/}
+                                                {/*style={{*/}
+                                                    {/*fontSize: 24,*/}
+                                                    {/*alignSelf: 'flex-end',*/}
+                                                    {/*color: `${this.state.deleteBtnSpin ? '#ec1414' : '#1890ff'}`,*/}
+                                                {/*}}*/}
+                                                {/*onClick={() => this.deleteCurrentReplay(listIndex, item)}*/}
+                                            {/*/>*/}
+                                        {/*</Popover>*/}
+                                    {/*) : null}*/}
                                 </div>
                             </li>
+
                         </Suspense>
                     );
                 })}
             </ul>
+            <div style={{ float:"left", clear: "both" }}
+                ref={(el) => { this.messagesEnd = el; }}>
+            </div>
+        </div>
         );
     }
 }

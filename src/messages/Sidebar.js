@@ -31,7 +31,7 @@ class Sidebar extends Component {
                    onCollapse={(collapsed, type) => { console.log(collapsed, type); }}>
                 <div class='notlogout' style={{ height: '100%'}}>
                 <div className="avatarUsername" style={{ height:'60px', width: '100%'}}>
-                    <Avatar size="large" icon="user" style={{ float: 'left', marginLeft: '10px', marginTop:'10px'}}/>
+                    <Avatar shape="square" size="large" icon="user" style={{ float: 'left', marginLeft: '10px', marginTop:'10px'}}/>
                     <div style={{ width:'70%', float:'left', color:'#ffffff',marginTop:'20px' }}>用户名aaaaaaaaa</div>
                 </div>
                     <Search
@@ -40,22 +40,23 @@ class Sidebar extends Component {
                         style={{ width: '80%' }}
                     />
                 <Menu theme="dark" mode="inline" defaultSelectedKeys={['4']}>
-                    <Menu.Item key="1">
-                        <Icon type="user" />
-                        <span className="nav-text">nav 1</span>
+                    <Menu.Item key="1" style={{height: '60px'}}>
+
+                        <Avatar shape="square" size="large" style={{float:'left', marginLeft:'10px', marginTop:'10px'}} />
+                        <span className="nav-text" style={{ lineHeight:'60px' }}>公共聊天室</span>
                     </Menu.Item>
-                    <Menu.Item key="2">
-                        <Icon type="video-camera" />
-                        <span className="nav-text">nav 2</span>
-                    </Menu.Item>
-                    <Menu.Item key="3">
-                        <Icon type="upload" />
-                        <span className="nav-text">nav 3</span>
-                    </Menu.Item>
-                    <Menu.Item key="4">
-                        <Icon type="user" />
-                        <span className="nav-text">nav 4</span>
-                    </Menu.Item>
+                    {/*<Menu.Item key="2">*/}
+                        {/*<Icon type="video-camera" />*/}
+                        {/*<span className="nav-text">nav 2</span>*/}
+                    {/*</Menu.Item>*/}
+                    {/*<Menu.Item key="3">*/}
+                        {/*<Icon type="upload" />*/}
+                        {/*<span className="nav-text">nav 3</span>*/}
+                    {/*</Menu.Item>*/}
+                    {/*<Menu.Item key="4">*/}
+                        {/*<Icon type="user" />*/}
+                        {/*<span className="nav-text">nav 4</span>*/}
+                    {/*</Menu.Item>*/}
                 </Menu>
                 </div>
                 <div style={{background:'#001529'}} >

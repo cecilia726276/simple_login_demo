@@ -87,9 +87,9 @@ class Landing extends Component {
 
                         console.log(response);
                         let responseCode = response.data.code;
-                        let token = response.data.data.token;
-                        console.log("First token: ", token);
                         if (responseCode === 200){
+                            let token = response.data.data.token;
+                            console.log("First token: ", token);
                             this.onLogin(token);
                             //cookie.remove('userId');
                             let history = this.context.router.history;
