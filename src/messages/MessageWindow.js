@@ -89,6 +89,9 @@ export default class MessageWindow extends PureComponent {
         };
     }
 
+    componentWillMount() {
+
+    }
     // 唤醒子组件的回调过程
     wakeUpLazyComponent = () => {
         return <div>loading.....</div>;
@@ -175,29 +178,6 @@ export default class MessageWindow extends PureComponent {
                                             <LazyComponent {...item} />
                                         </div>
                                     </div>
-                                    {/*{!!operate && item.operatBtn ? (*/}
-                                        {/*<Popover*/}
-                                            {/*content={'此操作会删除该记录'}*/}
-                                            {/*title="谨慎操作!"*/}
-                                            {/*onMouseEnter={() => {*/}
-                                                {/*this.setState({ deleteBtnSpin: true });*/}
-                                            {/*}}*/}
-                                            {/*onMouseLeave={() => {*/}
-                                                {/*this.setState({ deleteBtnSpin: false });*/}
-                                            {/*}}*/}
-                                        {/*>*/}
-                                            {/*<Icon*/}
-                                                {/*type="delete"*/}
-                                                {/*spin={deleteBtnSpin}*/}
-                                                {/*style={{*/}
-                                                    {/*fontSize: 24,*/}
-                                                    {/*alignSelf: 'flex-end',*/}
-                                                    {/*color: `${this.state.deleteBtnSpin ? '#ec1414' : '#1890ff'}`,*/}
-                                                {/*}}*/}
-                                                {/*onClick={() => this.deleteCurrentReplay(listIndex, item)}*/}
-                                            {/*/>*/}
-                                        {/*</Popover>*/}
-                                    {/*) : null}*/}
                                 </div>
                             </li>
 

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {BrowserRouter as Router} from 'react-router-dom';
-import { Layout, Button, message, Menu, Icon, Input } from 'antd';
+import { Layout, Button, message, Menu, Icon, Input, Form, Tooltip } from 'antd';
 import cookie from "react-cookies";
 import * as routes from "../router/MainPages";
 import PropTypes from "proptypes";
@@ -14,12 +14,14 @@ const {
     Header, Footer, Content,
 } = Layout;
 
-class LoginPage extends Component {
+class Login extends Component {
     constructor(props) {
         super(props);
 
         this.onLogout = this.onLogout.bind(this);
         this.state = {
+            content:'',
+            blank: false,
         };
     }
 
@@ -53,14 +55,57 @@ class LoginPage extends Component {
         }
     }
 
+    handleSubmit = () => {
+        let token = this.state.token;
+        let content = this.state.content;
+        if (content === ''|| content == null){
+            console.log("empty: " + content);
+            this.setState({blank: true})
+        }else{
+            console.log("message: " + content);
+            let filter = {
+                content: content
+            };
+            let url = "/user/sendMessage";
+            let getInformation = prepareRequest(filter,url);
+
+            axios(getInformation)
+                .then(response => {
+
+                    console.log(response);
+                    let responseCode = response.data.code;
+                    if (responseCode === 200) {
+                        this.setState({
+                            content: ''
+                        })
+                    } else {
+                        message.error("发生未知错误，请重试！")
+                    }
+                })
+
+        }
+    }
+    // handleEnterKey = (e) => {
+    //     if(e.nativeEvent.keyCode === 13){ //e.nativeEvent获取原生的事件对像
+    //         this.onSendText()
+    //     }
+    // };
+
+    handlerChange = (e) =>{
+        this.setState({blank: false})
+        let newValue = e.target.value;
+        this.setState({content: newValue});
+    };
+
     onLogout = () => {
         cookie.remove('token', { path: '/' });
         message.success("Logout successfully!")
         let history = this.context.router.history;
         history.push(routes.LANDING);
-    }
+    };
 
     render() {
+        const { getFieldDecorator } = this.props.form;
         return (
             <Layout style={{position: 'absolute', height: '100%', width:'100%'}}>
                 <Sidebar/>
@@ -72,16 +117,22 @@ class LoginPage extends Component {
                     <Content style={{ height: '400px', overflowY: 'scroll'  }}>
                         <MessageWindow/>
                     </Content>
-                    <Footer style={{background: '#ffffff'}}>
-                        <textarea style={{width:'100%',outline: 'none', border: '0', background: 'none', resize: 'none'}} rows={6} />
-                        <Button style={{float: 'right'}} htmlType='submit'>发送</Button>
+                    <Footer style={{background: '#ffffff', width:'100%'}}>
+                                <textarea value={this.state.content} onChange={this.handlerChange}
+                                          style={{lineHeight:'22px', width:'100%',outline: 'none', border: '0', background: 'none', resize: 'none'}} rows={6} />
+                        <Tooltip placement="topLeft" visible={this.state.blank} title="消息不能为空">
+                            <Button style={{float: 'right'}} onClick={()=>this.handleSubmit()}>发送</Button>
+                        </Tooltip>
+
                     </Footer>
                 </Layout>
             </Layout>
         );
     }
 }
-LoginPage.contextTypes = {
+Login.contextTypes = {
     router: PropTypes.object.isRequired
 };
-export default LoginPage;
+
+const LoginPage = Form.create()(Login);
+export default (props)=><LoginPage {...props} />
